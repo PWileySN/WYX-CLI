@@ -1,0 +1,82 @@
+#!/bin/bash
+
+. "${WYX_DIR}/src/classes/sys/sys.class"
+sys sys
+
+csv_dir="${WYX_DIR}/src/data"
+
+lib.csv.query(){
+    if [ ! -f "${csv_dir}/$1.csv" ]; then
+        sys.log.error "File not found: ${csv_dir}/$1.csv"
+        return 1
+    fi
+    csvsql --query "select $2 from $1 $3" "${csv_dir}/$1.csv"
+}
+
+lib.csv.query.one(){
+    lines=($(lib.csv.query "$1" "$2" "$3"))
+    if sys.os.mac; then
+        echo "${lines[2]}"
+    else
+        echo "${lines[1]}"
+    fi
+}
+
+lib.csv.all(){
+    type="$1"
+
+    IFS=$'\n' categories=($(lib.csv.query "arg_categories" "id"))
+    for category in "${categories[@]:1}"; do
+        if [ "$category" = "" ]; then
+            continue
+        fi
+        IFS=$'\n' scripts=($(lib.csv.query "arg_scripts" "id" "where category_id='$category'"))
+        
+        if [ "${scripts[1]}" = "" ]; then
+            continue
+        fi
+        cat=$(lib.csv.query.one 'arg_categories' 'name' "where id='$category'")
+        if [ "$type" = "git" ]; then
+            echo "### ${cat}"
+        else
+            sys.log.h1 "${cat}"
+        fi
+        for script in "${scripts[@]:1}"; do
+            if [ "$script" = "" ]; then
+                continue
+            fi
+            name=$(lib.csv.query.one 'arg_scripts' 'name' "where id='$script'")
+            arg=$(lib.csv.query.one 'arg_scripts' 'args' "where id='$script'" | tr -d '"')
+            command_name="$script"
+            if [[ "$arg" != "" ]] || [[ "$arg" = "\"\"" ]]; then
+                command_name="$script $arg"
+            fi
+            if [ "$type" = "git" ]; then
+                echo "- \`$command_name\`: ${ORANGE}${name}${RESET}"
+            else
+                echo "- $command_name: ${ORANGE}${name}${RESET}"
+            fi
+        done
+        echo ""
+    done
+}
+
+lib.csv.scripts.name(){
+    lib.csv.query.one "arg_scripts" "name" "where id='$1'"
+}
+
+lib.csv.scripts.path(){
+    lib.csv.query.one "arg_scripts" "path" "where id='$1'"
+}
+
+lib.csv.scripts.public(){
+    lib.csv.query.one "arg_scripts" "public" "where id='$1'"
+}
+
+lib.csv.scripts.args(){
+    lib.csv.query.one "arg_scripts" "args" "where id='$1'"
+}
+
+lib.csv.categories.name(){
+    lib.csv.query.one "arg_categories" "name" "where id='$1'"
+}

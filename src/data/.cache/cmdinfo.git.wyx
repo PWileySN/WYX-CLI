@@ -1,0 +1,9 @@
+### VERSION 📦
+- `version`: [33mWYX-CLI Version[37m
+
+### DEPENDENCIES 📦
+- `install-deps`: [33mInstall WYX-CLI dependencies[37m
+- `update-deps`: [33mUpdate the project dependencies[37m
+- `list-deps`: [33mList the project dependencies[37m
+
+### SYSTEM 🖥️

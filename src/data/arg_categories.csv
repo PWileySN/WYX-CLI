@@ -1,0 +1,19 @@
+id,name
+version,VERSION 📦
+deps,DEPENDENCIES 📦
+sys,SYSTEM 🖥️
+nav,DIRECTORY NAVIGATION 📍
+code,CODE 💲
+git,GIT AUTOMATION 🐙
+urls,URLs 🔗
+env,ENV/KEYSTORE 🗝️
+mydata,MY DATA 📂
+mmdata,MANAGE MY DATA 📂
+futil,FILE UTILITIES 📁
+nutil,NETWORK UTILITIES 📡
+wutil,WEB UTILITIES 🌐
+aiutil,AI UTILITIES 🤖
+tutil,TEXT UTILITIES 📝
+iutil,IMAGE UTILITIES 📸
+mutil,MISC UTILITIES 🛠️
+hutil,HELP UTILITIES ℹ️

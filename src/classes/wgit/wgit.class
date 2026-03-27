@@ -1,0 +1,240 @@
+#!/bin/bash
+
+. "${WYX_DIR}/src/classes/sys/sys.h"
+sys sys
+
+wgit.is_git_repo(){
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+		branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+	fi
+	if ! sys.util.empty "$branch" ; then
+		return 0
+	else
+		sys.log.error "This is not a git repository..."
+		return 1
+	fi
+}
+
+wgit.giturl(){
+    if wgit.is_git_repo ; then
+		sys.util.openurl "$1"
+	fi
+}
+
+wgit.ginit(){
+    git init
+	if sys.util.empty "$2" ; then
+		sys.log.info "Provide a name for this repository:"
+		read -r rname
+		echo "# $rname" >> README.md
+		sys.log.info "Would you like to add a MIT license to this repository? [ Yy / Nn ]"
+		read -r rlicense
+		if [ "$rlicense" = "y" ] || [ "$rlicense" = "Y" ]
+		then
+			touch "LICENSE.md"
+			echo -e "MIT License\n\nCopyright (c) $(wyxd.user.name) $year\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE." >> "LICENSE.md"
+		fi
+		wgit.commit "wyx-cli: first commit"
+		git remote add origin "git@github.com:$1/$rname.git"
+		sys.util.openurl "https://github.com/$3"
+	else
+		echo "# $2" >> README.md
+		wgit.commit "wyx-cli: first commit"
+		git remote add origin "git@github.com:$1/$2.git"
+		sys.util.openurl "https://github.com/$3"
+	fi
+}
+
+wgit.wyx_ginit(){
+    if ! sys.util.empty "$1"; then
+		mkdir "$1"
+		cd "$1" || return 1
+	fi
+
+	if sys.util.empty "$branch" ; then
+		sys.log.info "Would you like you to host this repository under a GitHub organization? [ Yy / Nn ]"
+		read -r response
+		if [ "$response" = "y" ] || [ "$response" = "Y" ]
+		then
+			echo ""
+			sys.log.h1 "Your saved GitHub organization aliases:"
+			wyxd.orgs
+			echo ""
+			sys.log.info "Please enter the organization name alias you would like to use:"
+			read -r orgalias
+			if wyxd.orgexists "$orgalias" ; then
+				wgit.ginit "$(wyxd.org $orgalias)" "$2" "organizations/$(wyxd.org $orgalias)/repositories/new"
+			else
+				wgit.ginit "$(wyxd.user.username)" "$2" "new"
+			fi
+		else
+			wgit.ginit "$(wyxd.user.username)" "$2" "new"
+		fi
+	else
+		sys.log.error "This is already a git repository..."
+	fi
+}
+
+wgit.commit() {
+	if sys.util.empty "$1" ; then
+		if [ -f "${WYX_DATA_DIR}/.env" ]; then
+			if grep -q "USE_OPENCODE_COMMIT=true" "${WYX_DATA_DIR}/.env" ; then
+				IFS=$'\n' lines=($(bash "$WYX_SCRIPT_DIR/services/opencode_service.sh" "smart"))
+				git add .
+				sys.log.h2 "OpenCode Suggestion"
+				if sys.shell.zsh; then
+					sys.log.h2 "Title:${RESET}	${lines[1]}"
+					sys.log.h2 "Description:${RESET} ${lines[2]}"
+					echo ""
+					sys.log.info "Press enter to use this suggestion or type your own description."
+					read -r description
+					git commit -m "${description:-${lines[1]}}" -m "${lines[2]}"
+				else
+					sys.log.h2 "Title:${RESET}	${lines[0]}"
+					sys.log.h2 "Description:${RESET} ${lines[1]}"
+					echo ""
+					sys.log.info "Press enter to use this suggestion or type your own description."
+					read -r description
+					git commit -m "${description:-${lines[0]}}" -m "${lines[1]}"
+				fi
+			else
+				sys.log.info "Provide a commit description: (defaults to 'wyx-cli quick commit')"
+				read -r description
+				git add .
+				git commit -m "${description:-wyx-cli quick commit}"
+			fi
+		else
+			sys.log.info "Provide a commit description: (defaults to 'wyx-cli quick commit')"
+			read -r description
+			git add .
+			git commit -m "${description:-wyx-cli quick commit}"
+		fi
+	else
+		git add .
+		git commit -m "${1:-wyx-cli quick commit}"
+	fi
+}
+
+wgit.push() {
+	if [ "$1" != "$branch" ]; then
+		git checkout "$1"
+	fi
+	wgit.commit "$2"
+	git push origin "$1"
+}
+
+wgit.npush() {
+	git checkout -b "$1"
+	wgit.commit "$2"
+	git push origin "$1"
+}
+
+wgit.pull() {
+	if [ "$1" != "$branch" ]; then
+		git checkout "$1"
+	fi
+	git pull origin "$1"
+}
+
+wgit.pr() {
+	if wgit.is_git_repo ; then
+		if [[ "$git_host" == "github" ]]; then
+			sys.util.openurl "https://github.com/$repo_url/pull/new/$1"
+		elif [[ "$git_host" == "gitlab" ]]; then
+			sys.util.openurl "https://gitlab.com/$repo_url/-/merge_requests/new?merge_request%5Bsource_branch%5D=$1"
+		elif [[ "$git_host" == "bitbucket" ]]; then
+			sys.util.openurl "https://bitbucket.org/$repo_url/pull-requests/new?source=$1"
+		elif [[ "$git_host" == "azure" ]]; then
+			sys.util.openurl "https://dev.azure.com/$repo_url/pullrequestcreate?sourceRef=$1"
+		else
+			sys.log.error "This is not a supported git host..."
+		fi
+	fi
+}
+
+wgit.bpr() {
+	wgit.npush "$1"
+	wgit.pr "$1"
+}
+
+wgit.repo_url() {
+	if wgit.is_git_repo ; then
+		if [[ "$git_host" = "github" ]]; then
+			wgit.giturl "https://github.com/$repo_url"
+		elif [[ "$git_host" = "gitlab" ]]; then
+			wgit.giturl "https://gitlab.com/$repo_url"
+		elif [[ "$git_host" = "bitbucket" ]]; then
+			wgit.giturl "https://bitbucket.org/$repo_url"
+		elif [[ "$git_host" = "azure" ]]; then
+			wgit.giturl "https://dev.azure.com/$repo_url"
+		else
+			sys.log.error "This is not a supported git host..."
+		fi
+	fi
+}
+
+wgit.prs_url() {
+	if wgit.is_git_repo ; then
+		if [[ "$git_host" = "github" ]]; then
+			wgit.giturl "https://github.com/$repo_url/pulls"
+		elif [[ "$git_host" = "gitlab" ]]; then
+			wgit.giturl "https://gitlab.com/$repo_url/merge_requests"
+		elif [[ "$git_host" = "bitbucket" ]]; then
+			wgit.giturl "https://bitbucket.org/$repo_url/pull-requests"
+		elif [[ "$git_host" = "azure" ]]; then
+			wgit.giturl "https://dev.azure.com/$repo_url/pullrequests"
+		else
+			sys.log.error "This is not a supported git host..."
+		fi
+	fi
+}
+
+wgit.branch_url() {
+	if wgit.is_git_repo ; then
+		if [[ "$git_host" = "github" ]]; then
+			wgit.giturl "https://github.com/$repo_url/tree/$branch"
+		elif [[ "$git_host" = "gitlab" ]]; then
+			wgit.giturl "https://gitlab.com/$repo_url/-/tree/$branch"
+		elif [[ "$git_host" = "bitbucket" ]]; then
+			wgit.giturl "https://bitbucket.org/$repo_url/branch/$branch"
+		elif [[ "$git_host" = "azure" ]]; then
+			wgit.giturl "https://dev.azure.com/$repo_url?path=%2F&version=GB$branch&_a=contents"
+		else
+			sys.log.error "This is not a supported git host..."
+		fi
+	fi
+}
+
+wgit.issues_url() {
+	if wgit.is_git_repo ; then
+		if [[ "$git_host" = "github" ]]; then
+			wgit.giturl "https://github.com/$repo_url/issues"
+		elif [[ "$git_host" = "gitlab" ]]; then
+			wgit.giturl "https://gitlab.com/$repo_url/issues"
+		elif [[ "$git_host" = "bitbucket" ]]; then
+			wgit.giturl "https://bitbucket.org/$repo_url/issues"
+		elif [[ "$git_host" = "azure" ]]; then
+			new_repo_url=$(echo "$repo_url" | sed 's|/_git/.*||')
+			wgit.giturl "https://dev.azure.com/${new_repo_url}/_workitems"
+		else
+			sys.log.error "This is not a supported git host..."
+		fi
+	fi
+}
+
+wgit.pipelines_url() {
+	if wgit.is_git_repo ; then
+		if [[ "$git_host" = "github" ]]; then
+			wgit.giturl "https://github.com/$repo_url/actions"
+		elif [[ "$git_host" = "gitlab" ]]; then
+			wgit.giturl "https://gitlab.com/$repo_url/pipelines"
+		elif [[ "$git_host" = "bitbucket" ]]; then
+			wgit.giturl "https://bitbucket.org/$repo_url/pipelines"
+		elif [[ "$git_host" = "azure" ]]; then
+			new_repo_url=$(echo "$repo_url" | sed 's|/_git/.*||')
+			wgit.giturl "https://dev.azure.com/$new_repo_url/_build"
+		else
+			sys.log.error "This is not a supported git host..."
+		fi
+	fi
+}

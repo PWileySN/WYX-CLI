@@ -1,0 +1,53 @@
+name: Auto-update Project README & Cache
+
+# Controls when the action will run. Triggers the workflow on push events
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+    paths:
+      - .github/workflows/main.yml
+      - '*.sh'
+      - src/**
+      - .github/README_TEMPLATE.md
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Check out repository under $GITHUB_WORKSPACE, so the job can access it
+    - uses: actions/checkout@v3
+
+    # Setup apt dependencies
+    - name: Setup dependencies
+      run: |
+        sudo apt -y update
+        sudo apt -y install ghostscript fonts-freefont-otf imagemagick csvkit
+        sudo sed -i 's/\(<policy domain="resource" name="width" value="\)[^"]*/\1160KP/' /etc/ImageMagick-6/policy.xml
+        sudo sed -i 's/\(<policy domain="resource" name="height" value="\)[^"]*/\1160KP/' /etc/ImageMagick-6/policy.xml
+      shell: bash
+
+    # Run the script
+    - name: Run script file
+      run: |
+        export TERM=xterm-256color
+        chmod +x wyx-cli.sh
+        mkdir .wyx-cli-data && touch .wyx-cli-data/git-user.txt
+        printf "username=bot\nname=WYX-CLI Bot\n" >> .wyx-cli-data/git-user.txt
+        ./wyx-cli.sh update-cache
+        ./wyx-cli.sh update-stdout
+      shell: bash
+
+    # Commit and push changes
+    - name: Commit changes
+      run: |
+        git config --local user.name "WYX-CLI Bot"
+        git config --local user.email "hwixley1@gmail.com"
+        git pull
+        git add .generated/wyxcli-output-preview.png src/data/.cache/cmdinfo.git.wyx src/data/.cache/cmdinfo.term.wyx .github/README.md
+        git commit -m "GH-Action: auto-update README & cache files"
+        git push
