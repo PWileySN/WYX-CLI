@@ -15,8 +15,8 @@ source $WYX_DIR/src/classes/sys/sys.h
 sys sys
 source $WYX_DIR/src/classes/wgit/wgit.h
 wgit wgit
-source $WYX_DIR/src/classes/wyxd/wyxd.h
-wyxd wyxd
+source $WYX_DIR/src/classes/toolboxd/toolboxd.h
+toolboxd toolboxd
 source $WYX_DIR/src/classes/lib/lib.h
 lib lib
 
@@ -58,7 +58,7 @@ fi
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ $num_args -eq 0 ]; then
 	# No input - show command info
-	wyxd.command_info
+	toolboxd.command_info
 
 else
 	source $WYX_DIR/src/classes/cmd/cmd.h
@@ -78,7 +78,7 @@ else
 	else
 		# Invalid command - show error message
 		sys.log.error "Invalid command! Try again"
-		echo "Type 'wyx' to see the list of available commands (and their arguments), or 'wyx help' to be redirected to more in-depth online documentation"
+		echo "Type 'tool' to see the list of available commands (and their arguments), or 'tool help' to be redirected to more in-depth online documentation"
 	fi
 fi
 

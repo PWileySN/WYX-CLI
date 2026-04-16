@@ -215,7 +215,7 @@ create_and_push_branch() {
     fi
 }
 
-if wyxd.arggt "1" ; then
+if toolboxd.arggt "1" ; then
     create_and_push_branch "$1"
 else
     sys.log.info "Provide a branch name:"

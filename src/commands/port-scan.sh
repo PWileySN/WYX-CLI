@@ -9,10 +9,10 @@ sys.log.h2 "This script scans all the open ports on a given host."
 sys.log.h2 "Usage: ./port-scan.sh <host> <port-range>"
 sys.log.hr
 echo ""
-if ! wyxd.arggt "1"; then
+if ! toolboxd.arggt "1"; then
     host=$(sys.util.inlineread "Enter the host to scan (defaults to 'localhost'): ")
 fi
-if ! wyxd.arggt "2"; then
+if ! toolboxd.arggt "2"; then
     port_range=$(sys.util.inlineread "Enter the port range to scan (defaults to 1-10000): ")
 fi
 host=$(echo "$host" | sed 's/https\?:\/\///')

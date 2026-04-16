@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if wgit.is_git_repo ; then
-    if wyxd.arggt "1" ; then
+    if toolboxd.arggt "1" ; then
         wgit.bpr "$@"
     else
         sys.log.info "Provide a branch name:"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sys.log.info "Decrypting $1..."
-if wyxd.arggt "1"; then
+if toolboxd.arggt "1"; then
     if [ -f "$1" ]; then
         gpg -d "$1"
         sys.log.info "$1 file decrypted successfully!"

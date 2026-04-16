@@ -1,3 +1,3 @@
 #!/bin/bash
 
-wyxd.readme.update
+toolboxd.readme.update

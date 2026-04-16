@@ -1,3 +1,3 @@
 #!/bin/bash
 
-wyxd.run "$@"
+toolboxd.run "$@"

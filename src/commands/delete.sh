@@ -231,7 +231,7 @@ interactive_select() {
 }
 
 # Main execution
-if wyxd.arggt "1"; then
+if toolboxd.arggt "1"; then
     # Use provided path
     target_path="$1"
     if [[ ! -d "$target_path" ]]; then

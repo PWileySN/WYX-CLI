@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sys.log.info "Encrypting $1..."
-if wyxd.arggt "1"; then
+if toolboxd.arggt "1"; then
     if [ -d "$1" ]; then
         tar -cvf "$1.tar" "$1"
         gpg -c "$1.tar"

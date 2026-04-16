@@ -1,7 +1,7 @@
 #!/bin/bash
 
 data_to_edit="$1"
-if ! wyxd.arggt "1"; then
+if ! toolboxd.arggt "1"; then
     sys.log.info "What data would you like to edit?"
     read -r data_to_edit_prompt
     data_to_edit=$data_to_edit_prompt

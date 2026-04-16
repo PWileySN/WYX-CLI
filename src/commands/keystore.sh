@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if wyxd.arggt "1"; then
-    if wyxd.arggt "2"; then
-        wyxd.check_keystore "$1" "$2"
+if toolboxd.arggt "1"; then
+    if toolboxd.arggt "2"; then
+        toolboxd.check_keystore "$1" "$2"
     else
-        wyxd.check_keystore "$1"
+        toolboxd.check_keystore "$1"
     fi
 else
     if sys.shell.zsh; then
@@ -12,6 +12,6 @@ else
     else
         read -rp "${GREEN}Enter the key you would like to add to your keystore:${RESET} " key
     fi
-    wyxd.check_keystore "$key"
+    toolboxd.check_keystore "$key"
 fi
 sys.log.info "You're done!"

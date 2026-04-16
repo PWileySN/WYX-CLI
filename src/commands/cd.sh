@@ -1,3 +1,3 @@
 #!/bin/bash
 
-wyxd.cd "$@"
+toolboxd.cd "$@"

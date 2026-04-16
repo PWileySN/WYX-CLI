@@ -1,4 +1,5 @@
 .wyx-cli-data/
+.toolbox-data/
 wyx-cli-template.sh
 *.pyc
 deb/

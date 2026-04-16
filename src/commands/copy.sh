@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if wyxd.arggt "1"; then
+if toolboxd.arggt "1"; then
     if [[ "$1" =~ ^\$\(.*\)$ ]]; then
         DATA="$1"
         sys.util.clipboard "$DATA"

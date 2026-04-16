@@ -205,7 +205,7 @@ main_deploy() {
     local pipeline=""
     local job=""
     
-    if wyxd.arggt "1"; then
+    if toolboxd.arggt "1"; then
         target="$1"
         # Validate target exists
         if ! fly -t "$target" status &>/dev/null; then
@@ -217,12 +217,12 @@ main_deploy() {
         fi
         
         # Get pipeline from second argument if provided
-        if wyxd.arggt "2"; then
+        if toolboxd.arggt "2"; then
             pipeline="$2"
         fi
         
         # Get job from third argument if provided
-        if wyxd.arggt "3"; then
+        if toolboxd.arggt "3"; then
             job="$3"
         fi
     else

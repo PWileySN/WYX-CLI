@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pass_size=16
-if wyxd.arggt "1"; then
+if toolboxd.arggt "1"; then
     if ! [[ "$1" =~ ^[0-9]+$ ]]; then
         sys.log.error "Error: the password-length argument must be an integer"
         return 1

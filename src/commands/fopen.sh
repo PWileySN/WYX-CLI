@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if wyxd.arggt "1"; then
+if toolboxd.arggt "1"; then
     dir="$1"
-    if wyxd.direxists "$dir"; then
+    if toolboxd.direxists "$dir"; then
         mydir="${mydirs[$dir]/\~/${HOME}}"
         sys.log.info "Opening $WYX_DIR..."
         sys.util.openfile "$WYX_DIR"

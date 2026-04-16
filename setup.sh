@@ -67,17 +67,9 @@ for i in "${files[@]}"; do
 			elif [ "$i" = "run-configs.txt" ]; then
 				sys.log.info "Run configs flushed"
 			elif [ "$i" = ".env" ]; then
-				sys.log.info "Environment variables flushed"
-				echo ""
-				sys.log.h1 "Would you like the WYX-CLI to auto-update? [ y / n (default) ]"
-				read -r wyx_auto_update
-				if [ "$wyx_auto_update" = "y" ]; then
-					{ echo "WYX_GIT_AUTO_UPDATE=true"; } >> "$md_dir/$i"
-				else
-					{ echo "WYX_GIT_AUTO_UPDATE=false"; } >> "$md_dir/$i"
-				fi
+				echo "[INFO] Environment variables flushed"
 			echo ""
-			sys.log.h1 "Would you like to enable WYX-CLI OpenCode smart commit? [ y / n (default) ]"
+			sys.log.h1 "Would you like to enable toolbox OpenCode smart commit? [ y / n (default) ]"
 			read -r wyx_smart_commit
 			if [ "$wyx_smart_commit" = "y" ]; then
 				{ echo "USE_OPENCODE_COMMIT=true"; } >> "$md_dir/$i"
