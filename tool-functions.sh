@@ -71,5 +71,10 @@ multiplex() { tool multiplex "$@"; }
 quote() { tool quote "$@"; }
 today() { tool today "$@"; }
 deploy() { tool deploy "$@"; }
+nemo-test() { source /Users/pwt9708/SpringerNature/Scripts/toolbox/src/commands/nemo-test.sh "$@"; }
+test-boot()    { ~/.sn-zsh-personal/scripts/test-boot.sh "$@"; }
+backup-boot()  { ~/.sn-zsh-personal/scripts/backup-boot.sh "$@"; }
+lock-boot()    { ~/.sn-zsh-personal/scripts/lock-boot.sh "$@"; }
+unlock-boot()  { ~/.sn-zsh-personal/scripts/unlock-boot.sh "$@"; }
 
 # End of Toolbox Auto-generated Functions

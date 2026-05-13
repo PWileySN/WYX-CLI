@@ -71,3 +71,4 @@ multiplex,multiplex,"Create a multiplexed window terminal running multiple comma
 quote,quote,"Daily quote",true,,mutil
 today,today,"Daily stats",true,,mutil
 deploy,deploy,"Deploy to Concourse CI via fly",true,<target?> <pipeline?> <job?>,code
+nemo-test,nemo-test,"Run sbt tests for Nemo projects in parallel",true,<project1?> <project2?>,code
