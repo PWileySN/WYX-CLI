@@ -72,3 +72,7 @@ quote,quote,"Daily quote",true,,mutil
 today,today,"Daily stats",true,,mutil
 deploy,deploy,"Deploy to Concourse CI via fly",true,<target?> <pipeline?> <job?>,code
 nemo-test,nemo-test,"Run sbt tests for Nemo projects in parallel",true,<project1?> <project2?>,code
+test-boot,test-boot,"Verify zsh boot sequence is clean",true,,code
+backup-boot,backup-boot,"Snapshot ~/.sn-zsh-personal to backups directory",true,,code
+lock-boot,lock-boot,"Lock ~/.sn-zsh-personal zsh files to read-only",true,,code
+unlock-boot,unlock-boot,"Unlock ~/.sn-zsh-personal zsh files for editing",true,,code
