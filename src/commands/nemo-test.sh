@@ -118,11 +118,11 @@ main() {
     local project_path
     project_path=$(get_project_path "$project_name")
 
-    # Some projects require a specific JVM version
+    # Some projects require a specific JVM version — set JAVA_HOME directly
+    # rather than relying on `sdk use` which may not be available in all shells.
     local jvm_prefix=""
     if [[ "$project_name" == "nemo-cms-proxy" ]]; then
-      jvm_prefix="sdk use java 11.0.23-tem && "
-    fi
+      jvm_prefix="export JAVA_HOME=\$HOME/.sdkman/candidates/java/11.0.23-tem && export PATH=\$JAVA_HOME/bin:\$PATH && "
 
     # Spawn a new tab, set the title from inside the shell so WezTerm respects it,
     # run sbt test, keep the shell open after so you can read the output
