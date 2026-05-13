@@ -14,7 +14,7 @@
 AVAILABLE_PROJECTS=(
   "nemo-mpedia:/Users/pwt9708/SpringerNature/Projects/nemo/apps/nemo-mpedia"
   "nemo-mpedia-importer:/Users/pwt9708/SpringerNature/Projects/nemo/apps/nemo-mpedia-importer"
-  "nemo-cms-proxy:/Users/pwt9708/SpringerNature/Projects/nemo/apps/nemo-cms-proxy" # requires JVM 11
+  "nemo-cms-proxy:/Users/pwt9708/SpringerNature/Projects/nemo/apps/nemo-cms-proxy"
 )
 
 # ---------------------------------------------------------------------------
@@ -118,17 +118,10 @@ main() {
     local project_path
     project_path=$(get_project_path "$project_name")
 
-    # Some projects require a specific JVM version — set JAVA_HOME directly
-    # rather than relying on `sdk use` which may not be available in all shells.
-    local jvm_prefix=""
-    if [[ "$project_name" == "nemo-cms-proxy" ]]; then
-      jvm_prefix="export JAVA_HOME=\$HOME/.sdkman/candidates/java/11.0.23-tem && export PATH=\$JAVA_HOME/bin:\$PATH && "
-    fi
-
     # Spawn a new tab, set the title from inside the shell so WezTerm respects it,
     # run sbt test, keep the shell open after so you can read the output
     local pane_id
-    pane_id=$(wezterm cli spawn --cwd "$project_path" -- zsh -l -c "printf '\033]0;${project_name}\007'; ${jvm_prefix}sbt -Dsbt.server.forcestart=false test; echo ''; echo 'Press any key to close...'; read -k1")
+    pane_id=$(wezterm cli spawn --cwd "$project_path" -- zsh -l -c "printf '\033]0;${project_name}\007'; sbt -Dsbt.server.forcestart=false test; echo ''; echo 'Press any key to close...'; read -k1")
 
     # Also set the tab title via the CLI
     wezterm cli set-tab-title --pane-id "$pane_id" "$project_name"
