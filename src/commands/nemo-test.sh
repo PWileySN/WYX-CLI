@@ -123,6 +123,7 @@ main() {
     local jvm_prefix=""
     if [[ "$project_name" == "nemo-cms-proxy" ]]; then
       jvm_prefix="export JAVA_HOME=\$HOME/.sdkman/candidates/java/11.0.23-tem && export PATH=\$JAVA_HOME/bin:\$PATH && "
+    fi
 
     # Spawn a new tab, set the title from inside the shell so WezTerm respects it,
     # run sbt test, keep the shell open after so you can read the output
